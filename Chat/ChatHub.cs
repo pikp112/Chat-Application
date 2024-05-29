@@ -13,7 +13,7 @@ namespace ChatApplication.Chat
             _connection[Context.ConnectionId] = userConnection;
 
             await Clients.Group(userConnection.Room!)
-                .SendAsync("ReceiveMessage", "Bot", $"{userConnection.User} has joined the group");
+                .SendAsync("ReceiveMessage", "Bot", $"{userConnection.User} has joined the group", DateTime.Now);
 
             await SendConnectedUser(userConnection.Room!);
         }
@@ -33,9 +33,10 @@ namespace ChatApplication.Chat
             {
                 return base.OnDisconnectedAsync(exception);
             }
+            _connection.Remove(Context.ConnectionId);
 
             Clients.Group(userRoomConnection.Room!)
-                .SendAsync("ReceiveMessage", "Bot", $"{userRoomConnection.User} has left the group");
+                .SendAsync("ReceiveMessage", "Bot", $"{userRoomConnection.User} has left the group", DateTime.Now);
 
             SendConnectedUser(userRoomConnection.Room!); // Send updated list of connected users
 
